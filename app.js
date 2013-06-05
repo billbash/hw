@@ -4,13 +4,12 @@
  */
 
 var express = require('express')
-  , http = require('http')
   , sockio = require('socket.io')
   , routes = require('./routes');
 
 var app = module.exports = express.createServer();
 
-// Configuration
+// CONFIGURATION
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -41,4 +40,4 @@ app.listen(process.env.PORT, process.env.IP);
 console.log("Express server listening");
 
 //RUN SOCKET.IO
-require('./routes/socket')(app, sio);
+routes.socket(app, sio);

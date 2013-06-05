@@ -1,4 +1,4 @@
-module.exports = function(app, sio) {
+exports.socket = function(app, sio) {
     sio.sockets.on('connection', function(socket) {
         console.log('A socket connected');
         
