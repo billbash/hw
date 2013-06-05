@@ -1,4 +1,15 @@
 
+
+// Web Server Configuration
+var server_port = process.env.OPENSHIFT_INTERNAL_PORT; // most OS's will require sudo to listen on 80
+var server_address = process.env.OPENSHIFT_INTERNAL_IP;
+
+// MongoDB Configuration
+var mongo_host = process.env.OPENSHIFT_MONGODB_DB_HOST;
+var mongo_port = parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT, 10);
+var mongo_user = process.env.OPENSHIFT_MONGODB_DB_USERNAME;
+var mongo_pass = process.env.OPENSHIFT_MONGODB_DB_PASSWORD;
+
 /**
  * Module dependencies.
  */
@@ -36,7 +47,7 @@ app.get('/', routes.index);
 var sio = sockio.listen(app);
 sio.set('log level', 1);
 
-app.listen(process.env.PORT, process.env.IP);
+app.listen(server_port, server_address);
 console.log("Express server listening");
 
 //RUN SOCKET.IO
