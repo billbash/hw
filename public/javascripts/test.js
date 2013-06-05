@@ -1,4 +1,12 @@
-   // create an new instance of a pixi stage
+// socket.io test
+
+socket = io.connect('');
+
+socket.on('connect', function(){
+    socket.emit('yeah');
+});
+
+// create an new instance of a pixi stage
     var stage = new PIXI.Stage(0x66FF99);
  
     // create a renderer instance.
@@ -10,13 +18,13 @@
     requestAnimFrame( animate );
  
     // create a texture from an image path
-    var texture = PIXI.Texture.fromImage("bunny.png");
+    var texture = PIXI.Texture.fromImage("/images/bunny.png");
     // create a new Sprite using the texture
     var bunny = new PIXI.Sprite(texture);
  
     // center the sprites anchor point
-    bunny.anchor.x = 0.5;
-    bunny.anchor.y = 0.5;
+    //bunny.anchor.x = 0.5;
+    //bunny.anchor.y = 0.5;
  
     // move the sprite t the center of the screen
     bunny.position.x = 200;

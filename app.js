@@ -4,6 +4,8 @@
  */
 
 var express = require('express')
+  , http = require('http')
+  , sockio = require('socket.io')
   , routes = require('./routes');
 
 var app = module.exports = express.createServer();
@@ -28,9 +30,15 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-// Routes
-
+// URLS
 app.get('/', routes.index);
 
-app.listen(process.env.PORT);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+// RUN SERVER
+var sio = sockio.listen(app);
+sio.set('log level', 1);
+
+app.listen(process.env.PORT, process.env.IP);
+console.log("Express server listening");
+
+//RUN SOCKET.IO
+require('./routes/socket')(app, sio);
