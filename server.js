@@ -1,14 +1,23 @@
 
 
 // Web Server Configuration
-var server_port = process.env.OPENSHIFT_INTERNAL_PORT; // most OS's will require sudo to listen on 80
-var server_address = process.env.OPENSHIFT_INTERNAL_IP;
+var server_port = process.env.PORT;// most OS's will require sudo to listen on 80
+var server_address = process.env.IP;
 
 // MongoDB Configuration
-var mongo_host = process.env.OPENSHIFT_MONGODB_DB_HOST;
-var mongo_port = parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT, 10);
-var mongo_user = process.env.OPENSHIFT_MONGODB_DB_USERNAME;
-var mongo_pass = process.env.OPENSHIFT_MONGODB_DB_PASSWORD;
+var mongo = require('mongodb');
+var db = new mongo.Db('hw', new mongo.Server('ds029338.mongolab.com', 29338, {auto_reconnect : true, poolSize: 4}), {safe:true});
+
+
+db.open(function(err, client) {
+    client.authenticate('cloud9', 'cloud9', function(err, success) {
+    var collection = new mongo.Collection(client, 'test_collection');
+      collection.insert({hello: 'world'}, {safe:true},
+                        function(err, objects) {
+        if (err) return console.log(err.message);
+      });
+    });
+});
 
 /**
  * Module dependencies.
