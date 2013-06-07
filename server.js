@@ -1,27 +1,29 @@
-
-
-// Web Server Configuration
-var server_port = process.env.PORT;// most OS's will require sudo to listen on 80
+// Configuration
+var server_port = process.env.PORT;
 var server_address = process.env.IP;
 
 // MongoDB Configuration
-var mongo = require('mongodb');
-var db = new mongo.Db('hw', new mongo.Server('ds029338.mongolab.com', 29338, {auto_reconnect : true, poolSize: 4}), {safe:true});
-
-
-db.open(function(err, client) {
-    client.authenticate('cloud9', 'cloud9', function(err, success) {
-    var collection = new mongo.Collection(client, 'test_collection');
-      collection.insert({hello: 'world'}, {safe:true},
-                        function(err, objects) {
-        if (err) return console.log(err.message);
-      });
-    });
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://cloud9:cloud9@ds029338.mongolab.com:29338/hw',
+  function(err) {
+    if (err) { throw err; }
 });
 
-/**
- * Module dependencies.
- */
+/*
+var CommentaireArticleModel = require('./models/commentaire');
+
+// On créé une instance du Model
+var monCommentaire = new CommentaireArticleModel({ pseudo : 'Linus' });
+monCommentaire.contenu = 'Salut, super article sur Mongoose hey !';
+
+// On le sauvegarde dans MongoDB !
+monCommentaire.save(function (err) {
+  if (err) { throw err; }
+  console.log('Commentaire ajouté avec succès !');
+  // On se déconnecte de MongoDB maintenant
+  mongoose.connection.close();
+});
+*/
 
 var express = require('express')
   , sockio = require('socket.io')
