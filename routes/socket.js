@@ -19,9 +19,18 @@ exports.socket = function(app, sio) {
             var token = require('crypto').createHash('sha1').update('site_secret928fjkl'+name).digest("hex"); //TODO make it app.site_secret
             names[name] = token;
             tokens[token] = name;
-            console.log(names);
-            console.log(tokens);
+            //console.log(names);
+            //console.log(tokens);
             socket.emit('logged', {name: name, token: token});
+        });
+        
+        socket.on('token auth', function(data){
+          if (tokens.hasOwnProperty(data.token)) {
+            socket.emit('logged', {name: tokens[data.token], token: data.token});
+          } else {
+            socket.emit('expired token');
+          }
+          
         });
         
         socket.on('disconnect', function() {
