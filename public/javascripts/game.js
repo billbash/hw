@@ -54,6 +54,7 @@ socket.on('connect', function() {
       bootbox.alert('<b>'+data.error+'</b>');
     });
     
+    // authentified
     socket.on('logged', function(data) {
       $('#logged_msg').text('Logged in as '+data.name);
       local_set('token', data.token);
@@ -61,12 +62,11 @@ socket.on('connect', function() {
     
     
       // drawing
-          // create an new instance of a pixi stage
-      var interactive = true;
-      var stage = new PIXI.Stage(0xF0F0F0, interactive);
+      // create an new instance of a pixi stage
+      var stage = new PIXI.Stage(0xF0F0F0);
    
       // create a renderer instance.
-      var renderer = PIXI.autoDetectRenderer(400, 300);
+      var renderer = PIXI.autoDetectRenderer(352, 352);
    
       // add the renderer view element to the DOM
       document.body.appendChild(renderer.view);
@@ -75,10 +75,16 @@ socket.on('connect', function() {
       
       var bunny = {};
       bunny[NAME] = new PIXI.Sprite(texture);
+      bunny[NAME].anchor.x = 0.5;
+      bunny[NAME].anchor.y = 0.5;
+      //bunny[NAME].scale.x = 2;
+      //bunny[NAME].scale.y = 2;
       stage.addChild(bunny[NAME]);
       
       var texts = {};
-      texts[NAME] = new PIXI.Text(NAME, {font:"12px Arial", fill:"black"});
+      texts[NAME] = new PIXI.Text(NAME, {font:"bold 12px Arial", fill:"blue"});
+      texts[NAME].anchor.x = 0.5;
+      texts[NAME].anchor.y = 0.5;
       stage.addChild(texts[NAME]);
       
       requestAnimFrame( animate );
@@ -89,9 +95,9 @@ socket.on('connect', function() {
           renderer.render(stage);
       }
       
-      //TODO remove cursor when on canvas
-      
-      $('canvas').mousemove(function(e){
+      //TODO remove cursor when on canvas (why doesn't this work?)
+      $('canvas').first().style='cursor:none';
+      $('canvas').first().mousemove(function(e){
         var x = e.pageX - this.offsetLeft;
         var y = e.pageY - this.offsetTop;
         $('#status').html(x +', '+ y);
@@ -100,17 +106,21 @@ socket.on('connect', function() {
      }); 
       
       socket.on('play', function(data){
-        console.log(data.name + ' ' + data.x + ' ' + data.y);
+        //console.log(data.name + ' ' + data.x + ' ' + data.y);
         if (!(data.name in bunny)) {
           bunny[data.name] = new PIXI.Sprite(texture);
           stage.addChild(bunny[data.name]);
-          texts[data.name] = new PIXI.Text(data.name, {font:"12px Arial", fill:"black"});
+          texts[data.name] = new PIXI.Text(data.name, {font:"bold 12px Arial", fill:"blue"});
           stage.addChild(texts[data.name]);
         }
         bunny[data.name].position.x = data.x;
         bunny[data.name].position.y = data.y;
+        bunny[data.name].anchor.x = 0.5;
+        bunny[data.name].anchor.y = 0.5;
         texts[data.name].position.x = data.x;
         texts[data.name].position.y = data.y;
+        texts[data.name].anchor.x = 0.5;
+        texts[data.name].anchor.y = 0.5;
       });
     });
     
