@@ -30,3 +30,26 @@ db.open(function(err, client) {
         // Do Something ...
     });
 });
+
+
+
+
+-----------------
+
+
+/*
+var CommentaireArticleModel = require('./models/commentaire');
+
+// On créé une instance du Model
+var monCommentaire = new CommentaireArticleModel({ pseudo : 'Linus' });
+monCommentaire.contenu = 'Salut, super article sur Mongoose hey !';
+
+// On le sauvegarde dans MongoDB !
+monCommentaire.save(function (err) {
+  if (err) { throw err; }
+  console.log('Commentaire ajouté avec succès !');
+  elapsed_time('DATABASE ACCESS TIME');
+  // On se déconnecte de MongoDB maintenant
+  mongoose.connection.close();
+});
+*/

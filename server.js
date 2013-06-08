@@ -10,24 +10,6 @@ mongoose.connect('mongodb://cloud9:cloud9@ds029338.mongolab.com:29338/hw',
 });
 
 
-/*
-var CommentaireArticleModel = require('./models/commentaire');
-
-// On créé une instance du Model
-var monCommentaire = new CommentaireArticleModel({ pseudo : 'Linus' });
-monCommentaire.contenu = 'Salut, super article sur Mongoose hey !';
-
-// On le sauvegarde dans MongoDB !
-monCommentaire.save(function (err) {
-  if (err) { throw err; }
-  console.log('Commentaire ajouté avec succès !');
-  elapsed_time('DATABASE ACCESS TIME');
-  // On se déconnecte de MongoDB maintenant
-  mongoose.connection.close();
-});
-*/
-
-
 var express = require('express')
   , sockio = require('socket.io')
   , routes = require('./routes');
