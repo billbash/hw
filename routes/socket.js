@@ -24,13 +24,20 @@ exports.socket = function(app, sio) {
             socket.emit('logged', {name: name, token: token});
         });
         
-        socket.on('token auth', function(data){
+        socket.on('token auth', function(data) {
           if (tokens.hasOwnProperty(data.token)) {
             socket.emit('logged', {name: tokens[data.token], token: data.token});
           } else {
             socket.emit('expired token');
           }
           
+        });
+        
+        socket.on('mouse move', function(data) {
+          var name = tokens[data.token];
+          if(name) {
+            sio.sockets.emit('play', {name:name,x:data.x,y:data.y});
+          }
         });
         
         socket.on('disconnect', function() {
