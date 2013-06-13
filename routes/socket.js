@@ -3,6 +3,13 @@
 //http://stackoverflow.com/questions/4647348/send-message-to-specific-client-with-socket-io-and-node-js
 
 
+// TEST (remove everything below for production)
+var World = require('../lib/world');
+var w = new World(11);
+console.log (JSON.stringify(w.grid.bricks));
+
+
+
 var names={}; //TODO make it a call to database with business class in lib
 var tokens={};
 
@@ -30,7 +37,7 @@ exports.socket = function(app, sio) {
         });
         
         socket.on('token auth', function(data) {
-          if (tokens.hasOwnProperty(data.token)) {
+          if (data.hasOwnProperty('token') && tokens.hasOwnProperty(data.token)) {
             socket.emit('logged', {name: tokens[data.token], token: data.token});
           } else {
             socket.emit('expired token');
@@ -38,14 +45,36 @@ exports.socket = function(app, sio) {
           
         });
         
-        socket.on('mouse move', function(data) {
-          var name = tokens[data.token];
-          if(name) {
-            sio.sockets.volatile.emit('play', {name:name,x:data.x,y:data.y});
+        socket.on('full update', function(data) {
+          if (data.hasOwnProperty('token') && tokens.hasOwnProperty(data.token)) {
+            socket.emit('full update', JSON.stringify(w));
+          }
+        });
+        
+        
+        //TODO detect end of game
+        //TODO add setInterval updates where bricks disappear
+        //TODO make selected a property of player and not brick
+        // and add current race position and (running total) score
+        socket.on('clicked', function(data) {
+          if (data.hasOwnProperty('token') && tokens.hasOwnProperty(data.token)) {
+            if (data.x < w.size && data.y < w.size && w.grid.bricks[data.x + w.size * data.y] !== null) {
+              
+              for (var i = 0 ; i < w.size * w.size ; i++) {
+                if (w.grid.bricks[i] && w.grid.bricks[i].selected == tokens[data.token]) {
+                  return;
+                }
+              }
+              if (!w.grid.bricks[data.x + w.size * data.y].selected) {
+                w.grid.bricks[data.x + w.size * data.y].selected = tokens[data.token];
+                sio.sockets.emit('full update', JSON.stringify(w));
+              }
+            }
           }
         });
         
         socket.on('disconnect', function() {
+          //TODO remove player and everything player selected
             console.log('A socket disconnected.');
         });
     });
