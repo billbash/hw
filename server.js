@@ -48,3 +48,9 @@ console.log("Express server listening");
 
 //RUN SOCKET.IO
 routes.socket(app, sio);
+
+
+// TEST (remove everything below for production)
+var World = require('./lib/world');
+var w = new World();
+console.log (w.grid.bricks);

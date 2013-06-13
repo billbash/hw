@@ -1,3 +1,5 @@
+//TODO replace PIXI.js with IvanK library
+
 // login test
 NAME="";
 LOCAL_STORAGE = {}; //for browsers with no local storage

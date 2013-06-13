@@ -1,3 +1,8 @@
+//TODO use socket.io namespace
+//TODO save socket.id to be able to send to specific clients
+//http://stackoverflow.com/questions/4647348/send-message-to-specific-client-with-socket-io-and-node-js
+
+
 var names={}; //TODO make it a call to database with business class in lib
 var tokens={};
 
@@ -8,8 +13,8 @@ exports.socket = function(app, sio) {
         socket.on('login', function(data) {
             var name = data.name;
             //if not alphanum, reject
-            if (!name.match(/^[a-z0-9]+$/i) || name.length < 3) {
-              socket.emit('error', {error: 'Name must only use allowed characters A-Za-z0-9 and be at least 3 characters long!'});
+            if (!name.match(/^[a-z0-9]+$/i) || name.length < 3 || name.length > 15) {
+              socket.emit('error', {error: 'Name must only use allowed characters A-Za-z0-9 and be between 3 and 15 characters long!'});
               return;
             }         
             //ensure unicity
@@ -36,7 +41,7 @@ exports.socket = function(app, sio) {
         socket.on('mouse move', function(data) {
           var name = tokens[data.token];
           if(name) {
-            sio.sockets.emit('play', {name:name,x:data.x,y:data.y});
+            sio.sockets.volatile.emit('play', {name:name,x:data.x,y:data.y});
           }
         });
         
