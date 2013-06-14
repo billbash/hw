@@ -38,7 +38,8 @@ function send_server(key, data) {
   socket.emit(key, data);
 }
 
-function redraw(s) {
+function redraw(s, t) {
+  // Grid
   var w = WORLD;
   s.graphics.clear();
   for (var i = 0; i < w.size * w.size; i++) {
@@ -53,6 +54,14 @@ function redraw(s) {
       s.graphics.beginFill(color, 1);
       s.graphics.drawRect(BRICK_SIZE * (i%w.size), BRICK_SIZE * Math.floor(i/w.size), BRICK_SIZE-1, BRICK_SIZE-1);
     }
+  }
+  // Scores
+  
+  //TODO sort by score, remove You are foobar, make a different color, limit
+  t.text = '';
+  for (var player in w.total_scores) {
+    t.text += player + ' ' + w.total_scores[player] + '\n';
+    t.width = t.textWidth; t.height = t.textHeight;
   }
 }
 
@@ -93,11 +102,19 @@ socket.on('connect', function() {
 			var s = new Sprite();
 			stage.addChild(s);
       
+      var f = new TextFormat("Verdana", 12, 0xdd8800, true);
+      var t = new TextField();
+      t.setTextFormat(f);
+      t.text = "-------------------------------";
+      t.x = BRICK_SIZE * 11 + 5;
+      t.y = 0;
+      t.width = t.textWidth; t.height = t.textHeight;
+      stage.addChild(t);
       
       socket.on('full update', function(data) {
         WORLD = JSON.parse(data); 
         //console.log(WORLD);
-        redraw(s);
+        redraw(s, t);
       });
       
       

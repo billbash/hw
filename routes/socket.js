@@ -2,6 +2,7 @@
 //TODO save socket.id to be able to send to specific clients
 //http://stackoverflow.com/questions/4647348/send-message-to-specific-client-with-socket-io-and-node-js
 
+//TODO put the logic in world and a login class
 
 // TEST (cleanup everything below for production)
 var World = require('../lib/world');
