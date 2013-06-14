@@ -18,7 +18,9 @@ var tokens={};
 exports.socket = function(app, sio) {
   
     // world update function
-    setInterval(function(){
+    //TODO small 3s delay when game is ended, with no click accepted
+    var interval;
+    function world_update() {
       // save all non selected bricks index in a list
       var nonselected = [];
       for (var i=0; i < w.size*w.size; i++) {
@@ -29,7 +31,7 @@ exports.socket = function(app, sio) {
       //console.log(nonselected);
       // remove one non selected brick randomly
       if (nonselected.length !== 0) {
-        var num_to_remove = 3; //TODO make it random?
+        var num_to_remove = Math.floor(Math.random() * 5) + 1;
         while (nonselected.length !== 0 && num_to_remove > 0) {
           var index = Math.floor(Math.random() * nonselected.length);
           w.grid.bricks[nonselected[index]] = null;
@@ -38,13 +40,20 @@ exports.socket = function(app, sio) {
         }
         sio.sockets.emit('full update', JSON.stringify(w));
       } else { //end of game, add to total scores, reset racescores, reset grid
-        //TODO
         w.computeScores();
         //console.log ("END OF GAME");
         w.reset();
         sio.sockets.emit('full update', JSON.stringify(w));
+        
+        //wait 3 secondes
+        clearInterval(interval);
+        
+        setTimeout(function() {
+          interval = setInterval(world_update, 1000);
+        }, 3000);
       }
-    }, 1000);
+    }
+    interval = setInterval(world_update, 1000);
   
     sio.sockets.on('connection', function(socket) {
         console.log('A socket connected');

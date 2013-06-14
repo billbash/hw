@@ -1,11 +1,11 @@
-//TODO replace PIXI.js with IvanK library
-
-// login test
+// GLOBALS
 NAME="";
 BRICK_TYPE_TO_COLOR = {BLACK: 0xFFFFFF};
 BRICK_SIZE = 32;
 WORLD = {};
 LOCAL_STORAGE = {}; //for browsers with no local storage
+
+// HELPER FUNCTIONS
 function local_set(key, value) {
   if(localStorage) {
     localStorage[key] = value;
@@ -56,8 +56,7 @@ function redraw(s, t) {
     }
   }
   // Scores
-  
-  //TODO sort by score, remove You are foobar, make a different color, limit
+  //TODO sort by score, remove "You are foobar", make player a different color, limit results to top 15
   t.text = '';
   for (var player in w.total_scores) {
     t.text += player + ' ' + w.total_scores[player] + '\n';
@@ -87,16 +86,15 @@ socket.on('connect', function() {
       });
     });
     
-    // authentified
+    // authenticated
     socket.on('logged', function(data) {
-      
       
       $('#logged_msg').html('You are <b>'+data.name+'</b>');
       local_set('token', data.token);
       NAME = data.name;
     
-      
       //drawing
+      //TODO rename s, f, t following global naming conventions
 			var stage = new Stage("c");
       stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseClick);
 			var s = new Sprite();
@@ -105,7 +103,7 @@ socket.on('connect', function() {
       var f = new TextFormat("Verdana", 12, 0xdd8800, true);
       var t = new TextField();
       t.setTextFormat(f);
-      t.text = "-------------------------------";
+      t.text = "-------------------------------"; //TODO find out why '' won't work here
       t.x = BRICK_SIZE * 11 + 5;
       t.y = 0;
       t.width = t.textWidth; t.height = t.textHeight;
@@ -115,8 +113,7 @@ socket.on('connect', function() {
         WORLD = JSON.parse(data); 
         //console.log(WORLD);
         redraw(s, t);
-      });
-      
+      });     
       
       send_server('full update', {});	
       
@@ -126,9 +123,6 @@ socket.on('connect', function() {
         var rect = document.getElementById('c').getBoundingClientRect();
         var coordX = Math.floor((stage.mouseX - rect.left) / BRICK_SIZE);
         var coordY = Math.floor((stage.mouseY - rect.top)/ BRICK_SIZE);
-        
-        //console.log(coordX);
-        //console.log(coordY);
         
         send_server('clicked', {x:coordX, y:coordY});
       }
