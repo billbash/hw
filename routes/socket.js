@@ -3,10 +3,11 @@
 //http://stackoverflow.com/questions/4647348/send-message-to-specific-client-with-socket-io-and-node-js
 
 
-// TEST (remove everything below for production)
+// TEST (cleanup everything below for production)
 var World = require('../lib/world');
 var w = new World(11);
-console.log (JSON.stringify(w.grid.bricks));
+//console.log (JSON.stringify(w.grid.bricks));
+
 
 
 
@@ -14,6 +15,36 @@ var names={}; //TODO make it a call to database with business class in lib
 var tokens={};
 
 exports.socket = function(app, sio) {
+  
+    // world update function
+    setInterval(function(){
+      // save all non selected bricks index in a list
+      var nonselected = [];
+      for (var i=0; i < w.size*w.size; i++) {
+        if (w.grid.bricks[i] && w.grid.bricks[i].selected===false) {
+          nonselected.push(i);
+        }
+      }
+      //console.log(nonselected);
+      // remove one non selected brick randomly
+      if (nonselected.length !== 0) {
+        var num_to_remove = 3; //TODO make it random?
+        while (nonselected.length !== 0 && num_to_remove > 0) {
+          var index = Math.floor(Math.random() * nonselected.length);
+          w.grid.bricks[nonselected[index]] = null;
+          nonselected.splice(index, 1);
+          num_to_remove--;
+        }
+        sio.sockets.emit('full update', JSON.stringify(w));
+      } else { //end of game, add to total scores, reset racescores, reset grid
+        //TODO
+        w.computeScores();
+        //console.log ("END OF GAME");
+        w.reset();
+        sio.sockets.emit('full update', JSON.stringify(w));
+      }
+    }, 1000);
+  
     sio.sockets.on('connection', function(socket) {
         console.log('A socket connected');
         
@@ -52,7 +83,7 @@ exports.socket = function(app, sio) {
         });
         
         
-        //TODO detect end of game
+        //TODO detect end of game and send scores, then wait a bit and restart
         //TODO add setInterval updates where bricks disappear
         //TODO make selected a property of player and not brick
         // and add current race position and (running total) score
@@ -67,6 +98,9 @@ exports.socket = function(app, sio) {
               }
               if (!w.grid.bricks[data.x + w.size * data.y].selected) {
                 w.grid.bricks[data.x + w.size * data.y].selected = tokens[data.token];
+                var e = {};
+                e[tokens[data.token]] = w.race_scores.length+1;         
+                w.race_scores.push(e); // TODO special bricks?
                 sio.sockets.emit('full update', JSON.stringify(w));
               }
             }
